@@ -1,0 +1,164 @@
+@import url('https://fonts.cdnfonts.com/css/lt-binary-neue');
+
+:root {
+    --js-text: #f0db4f;
+    font-family: 'LT Binary Neue', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    height: 100dvh;
+    min-height: 600px;
+
+    background-image: radial-gradient(circle at 50% 50%, #a3d9ff 10%, #cef0ff 60%);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.left, .right {
+    width: 50%;
+    height: 100%;
+}
+
+.left {
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.text-container .title {
+    font-size: 3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.text-container .letter-change {
+    transition: 0.1s;
+}
+
+.text-container .letter-change:hover {
+    color: var(--js-text);
+}
+
+.text-container .title .secondline {
+    font-size: 4.5rem;
+}
+
+.text-container .title .js-text {
+    color: transparent;
+    position: relative;
+}
+
+.text-container .title .js-text::after {
+    color: var(--js-text);
+    border-right: 2px solid #000;
+    width: 0%;
+    height: 100%;
+    overflow: hidden;
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: js_text 10s linear infinite;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    transition: 0.1s;
+}
+
+.feature-title span:hover {
+    color: var(--js-text);
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.feature {
+    margin-left: 30px;
+    transition: 0.3s;
+    transform-origin: center left;
+    width: max-content;
+}
+
+.feature:hover {
+    color: var(--js-text);
+    transform: scale(1.05);
+}
+
+.right {
+    padding: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calculator-body {
+    background-color: #0d111c;
+    border-radius: 40px;
+    max-width: 500px;
+    width: 100%;
+    min-width: 300px;
+    height: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.screen {
+    height: 35%;
+}
+
+.buttons-container {
+    border: 1px solid white;
+    height: 65%;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+.buttons-container div {
+}
+
+@keyframes js_text {
+    0%, 5%, 12%, 14% {
+        width: 0%;
+        border-right: 2px solid #000;
+    } 6%, 11% {
+        width: 0%;
+        border-right: none;
+    } 15%, 29%, 37%, 44%, 49%, 56%, 61%, 68%, 73%, 80%, 85%, 90% {
+        border-right: 2px solid #000;
+    } 38%, 43%, 50%, 55%, 62%, 67%, 74%, 79%, 86%, 89% {
+        border-right: none;
+    }30%, 90% {
+        width: 100%;
+    } 100% {
+        width: 0%;
+    }
+}
