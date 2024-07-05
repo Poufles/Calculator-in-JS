@@ -1,0 +1,22 @@
+.upper-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 13px;
+}
+
+.answer-container {
+    display: flex;
+    justify-content: right;
+    gap: 20px;
+}
+
+.history-container {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--clear-color);
+    font-size: 1rem;
+    text-align: right;
+    width: max-content;
+}

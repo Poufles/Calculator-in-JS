@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/component.css">
+    <script src="scripts/variables.js" defer></script>
+    <script src="scripts/style.js" defer></script>
+    <script src="scripts/calculate.js" defer></script>
     <title>Basic Math Calculator in JS</title>
 </head>
 <body>
@@ -24,9 +28,9 @@
         </div>
         <div class="right">
            <div class="calculator-body">
-                <div class="screen history-active">
+                <div class="screen screen-initial">
                     <div class="upper-screen">
-                        <button class="history-container" id="history-1">
+                        <!-- <button class="history-container" id="history-1">
                             <div class="operation-container">44 + 33</div>
                             <div class="answer-container">
                                 <p class="equal-sign">=</p>
@@ -39,14 +43,14 @@
                                 <p class="equal-sign">=</p>
                                 <p class="answer">4</p>
                             </div>
-                        </button>
+                        </button> -->
                     </div>
                     <div class="bottom-screen">
-                        <button class="operation-container">77 + 33</button>
-                        <div class="answer-container">
+                        <button class="operation-container active">77 + 33</button>
+                        <!-- <div class="answer-container">
                             <p class="equal-sign">=</p>
                             <p class="answer">100</p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="buttons-container">

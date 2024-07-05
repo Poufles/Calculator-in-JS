@@ -1,0 +1,47 @@
+.screen-initial {
+    justify-content: flex-end;
+}
+
+.history-active {
+    justify-content: space-between;
+}
+
+.bottom-screen .operation-container {
+    background-color: transparent;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.5s;
+    text-align: right;
+}
+
+.bottom-screen .operation-container.active {
+    font-size: 3rem;
+    cursor: text;
+}
+
+.bottom-screen .answer-container {
+    font-size: 3rem;
+}
+
+.answer-container {
+    display: flex;
+    justify-content: right;
+    gap: 20px;
+}
+
+.history-container {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--clear-color);
+    font-size: 1rem;
+    text-align: right;
+    width: max-content;
+}
+
+.key-press {
+    filter: brightness(0.9) !important;
+    transform: scale(0.95);
+}
