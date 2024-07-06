@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles/component.css">
     <script src="scripts/variables.js" defer></script>
     <script src="scripts/style.js" defer></script>
+    <script src="scripts/keys.js" defer></script>
     <script src="scripts/calculate.js" defer></script>
     <title>Basic Math Calculator in JS</title>
 </head>
@@ -46,7 +47,7 @@
                         </button> -->
                     </div>
                     <div class="bottom-screen">
-                        <button class="operation-container active">77 + 33</button>
+                        <button class="operation-container active"></button>
                         <!-- <div class="answer-container">
                             <p class="equal-sign">=</p>
                             <p class="answer">100</p>
@@ -54,24 +55,24 @@
                     </div>
                 </div>
                 <div class="buttons-container">
-                    <button class="keys">AC</button class="keys">
-                    <button class="keys">C</button class="keys">
-                    <button class="keys">+</button class="keys">
-                    <button class="keys">-</button class="keys">
-                    <button class="keys">7</button class="keys">
-                    <button class="keys">8</button class="keys">
-                    <button class="keys">9</button class="keys">
-                    <button class="keys">x</button class="keys">
-                    <button class="keys">4</button class="keys">
-                    <button class="keys">5</button class="keys">
-                    <button class="keys">6</button class="keys">
-                    <button class="keys">/</button class="keys">
-                    <button class="keys">1</button class="keys">
-                    <button class="keys">2</button class="keys">
-                    <button class="keys">3</button class="keys">
-                    <button class="keys">=</button class="keys">
-                    <button class="keys">0</button class="keys">
-                    <button class="keys">.</button class="keys">
+                    <button class="keys" id="all-clear">AC</button>
+                    <button class="keys" id="clear">C</button>
+                    <button class="keys operator">+</button>
+                    <button class="keys operator">-</button>
+                    <button class="keys numpad">7</button>
+                    <button class="keys numpad">8</button>
+                    <button class="keys numpad">9</button>
+                    <button class="keys operator">x</button>
+                    <button class="keys numpad">4</button>
+                    <button class="keys numpad">5</button>
+                    <button class="keys numpad">6</button>
+                    <button class="keys operator">/</button>
+                    <button class="keys numpad">1</button>
+                    <button class="keys numpad">2</button>
+                    <button class="keys numpad">3</button>
+                    <button class="keys">=</button>
+                    <button class="keys numpad">0</button>
+                    <button class="keys dot">.</button>
                 </div>
            </div>
         </div>

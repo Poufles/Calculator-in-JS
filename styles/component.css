@@ -14,10 +14,12 @@
     font-size: 1rem;
     transition: 0.5s;
     text-align: right;
+    white-space: nowrap;
+    float: right;
 }
 
 .bottom-screen .operation-container.active {
-    font-size: 3rem;
+    font-size: var(--initial-font_size);
     cursor: text;
 }
 
@@ -42,6 +44,14 @@
 }
 
 .key-press {
-    filter: brightness(0.9) !important;
+    filter: brightness(0.8) !important;
     transform: scale(0.95);
+}
+
+.mid-font {
+    font-size: calc(var(--initial-font_size) - 1rem) !important;
+}
+
+.small-font {
+    font-size: calc(var(--initial-font_size) - 1.8rem) !important;
 }
