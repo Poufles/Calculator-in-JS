@@ -1,3 +1,4 @@
+const screen = document.querySelector('.screen');
 const keys = document.querySelectorAll('keys');
 const numpads = document.querySelectorAll('.numpad');
 const key_dot = document.querySelector('.dot');
@@ -6,6 +7,7 @@ const key_c = document.querySelector('#clear');
 const calculator_screen = document.querySelector('.screen');
 const operators = document.querySelectorAll('.operator');
 const key_equal = document.querySelector('.equal');
+const upper_screen = document.querySelector('.upper-screen');
 const bottom_screen = document.querySelector('.bottom-screen');
 const op_container = bottom_screen.querySelector('.operation-text');
 const temp_equalValue = "";

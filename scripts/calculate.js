@@ -64,7 +64,7 @@ function calculate(arr) {
             }
         }
 
-        console.log(arr);
+        // console.log(arr); re-enable for debug
         // Remove num1, oper, and num2 values
         arr.splice(index, 3);
         // Then change it to their answer

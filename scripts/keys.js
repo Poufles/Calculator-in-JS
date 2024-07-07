@@ -30,6 +30,88 @@ function removeAnswerContainer() {
   op_container.classList.add('active');
 };
 
+// Create History
+function createHistoryContainer() {
+  if (!upper_screen.contains(upper_screen.querySelector('.history-container'))) {
+    // Create elements / component
+    const history_container = document.createElement('button');
+    const history_operation_container = document.createElement('div');
+    const history_answer_container = document.createElement('div');
+    const left_part = document.createElement('p');
+    const right_part = document.createElement('p');
+    // Add proper class
+    history_container.classList.add('history-container');
+    history_operation_container.classList.add('operation-container');
+    history_answer_container.classList.add('answer-container');
+    left_part.classList.add('equal-sign');
+    right_part.classList.add('answer');
+    // Append children
+    history_answer_container.appendChild(left_part);
+    history_answer_container.appendChild(right_part);
+    history_container.appendChild(history_operation_container);
+    history_container.appendChild(history_answer_container);
+    upper_screen.appendChild(history_container)
+    screen.classList.toggle('history-active');
+    screen.classList.toggle('screen-initial');
+
+    // Add history values
+    history_operation_container.textContent = op_container.textContent;
+    left_part.textContent = '=';
+    right_part.textContent = bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent;
+
+    // Add functionality to history container
+    history_container.addEventListener('mousedown', () => {
+      // Verify if answer container exists for reinitialization
+      if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
+        // Remove answer container
+        bottom_screen.removeChild(bottom_screen.querySelector('.answer-container'));
+        // Reinitialize visual text
+        op_container.classList.toggle('active');
+      };
+      // Retrieve visual text history
+      op_container.textContent = history_operation_container.textContent;
+      // Retrieve history operation
+      input_arr = history_operation_container.textContent.split(' ');
+      for (i = 0; i < input_arr.length; i++) {
+        let value = input_arr[i];
+        if (value == '+' || value == '-' || value == 'x' || value == '/') {
+          ;
+        } else if (isDecimal(value)) {
+          value = parseFloat(value);
+        } else {
+          value = parseInt(value);
+        }
+
+        input_arr[i] = value;
+      }
+      // Retrieve last number value
+      user_input = input_arr[input_arr.length - 1].toString();
+      // Remove last number
+      input_arr.pop();
+      // Remove history container
+      upper_screen.removeChild(history_container);
+      // Reinitialize screen
+      screen.classList.toggle('screen-initial');
+      screen.classList.toggle('history-active');
+      console.log('History | user_input: ' + user_input);
+      console.log('History | input_arr: ' + input_arr);
+    });
+  } else {
+    // Retrieve upper screen containers
+    const history_operation_container = upper_screen.querySelector('.operation-container');
+    const answer = upper_screen.querySelector('.answer');
+
+    history_operation_container.textContent = op_container.textContent;
+    answer.textContent = bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent;
+  }
+
+  // Reinitialize visual text
+  op_container.textContent = "";
+
+  console.log('History | user_input: ' + user_input);
+  console.log('History | input_arr: ' + input_arr);
+};
+
 // Changing font when text exceeds
 function dynamicFont() {
   if (
@@ -50,6 +132,13 @@ function dynamicFont() {
 // Numpad (0-9) functions
 numpads.forEach((numpad) => {
   numpad.addEventListener("mousedown", () => {
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
+      createHistoryContainer();
+      input_arr.splice(0);
+      op_container.classList.add('active');
+      removeAnswerContainer();
+    }
+
     // Visual effect
     op_container.textContent += numpad.textContent;
     // Back-end value
@@ -85,6 +174,13 @@ key_dot.addEventListener("mousedown", () => {
 operators.forEach((operator) => {
   operator.addEventListener("mousedown", () => {
     let visualTextLength = op_container.textContent.length; // Length of visual text
+
+    // Validate if answer container exist
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
+      op_container.classList.toggle('active');
+      removeAnswerContainer();
+    }
+
     // Verify if current visual text is an operator
     // " " signifies that the text inside the op_container
     // Has this format (num operator ) || (1 + ) 
@@ -125,7 +221,14 @@ operators.forEach((operator) => {
 
 // All Clear Value
 key_ac.addEventListener("mousedown", () => {
+  if (upper_screen.contains(upper_screen.querySelector('.history-container'))) {
+    upper_screen.removeChild(upper_screen.querySelector('.history-container'));
+    screen.classList.toggle('screen-initial');
+    screen.classList.toggle('history-active');
+  }
+
   if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
+    op_container.classList.toggle('active');
     removeAnswerContainer();
   }
 
@@ -182,7 +285,7 @@ key_c.addEventListener("mousedown", () => {
       // Take last back-end array value 
       user_input = input_arr.pop().toString();
       user_input = user_input.slice(0, user_input.length - 1)
-    // Anything else
+      // Anything else
     } else {
       user_input = user_input.slice(0, user_input.length - 1);
     }
@@ -215,6 +318,11 @@ key_equal.addEventListener('mousedown', () => {
   let answer = []; // Temp array
   let visualTextLength = op_container.textContent.length; // Length of visual text
 
+  // Verify if visual text is empty
+  if (op_container.textContent === "") {
+    return;
+  };
+
   // Check if current visual text is an operator
   // Format: (num operator) || (93 / )
   if (op_container.textContent[op_container.textContent.length - 1] === ' ') {
@@ -245,11 +353,28 @@ key_equal.addEventListener('mousedown', () => {
     input_arr.push(numeric);
     // Reinitialize back-end value
     user_input = '';
-    console.log('Equal | user_input' + user_input);
-    console.log('Equal | input_arr' + input_arr);
+    console.log('Equal | user_input: ' + user_input);
+    console.log('Equal | input_arr: ' + input_arr);
     // Create answer container
     if (!bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
       createAnswerContainer(answer);
     }
   }
+});
+
+// Operation container function
+op_container.addEventListener('mousedown', () => {
+  let answer_container = bottom_screen.querySelector('.answer-container');
+
+  if (bottom_screen.contains(answer_container)) {
+    op_container.classList.add('active');
+    bottom_screen.removeChild(answer_container);
+    if (op_container.textContent[op_container.textContent.length - 1] !== " ") {
+      user_input = input_arr[input_arr.length - 1].toString();
+    }
+    input_arr.pop();
+  }
+
+  console.log('Op Container | user_input: ' + user_input);
+  console.log('Op Container | input_arr: ' + input_arr);
 });
