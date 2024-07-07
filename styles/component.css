@@ -27,7 +27,7 @@
 }
 
 .bottom-screen .answer-container {
-    font-size: 3rem;
+    font-size: var(--initial-font_size);
 }
 
 .answer-container {
