@@ -240,7 +240,7 @@ operators.forEach((operator) => {
 
     // Validate user error
     // Check if output is '???'
-    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent === '???') {
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent === '???' || bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent === 'Yes') {
       validateHistoryCreation();
       op_container.textContent = `0 ${operator.textContent} `;
       return;
@@ -385,6 +385,9 @@ key_c.addEventListener("mousedown", () => {
     // Update visual text
     op_container.textContent = op_container.textContent.slice(0, visualTextLength - 1);
   }
+
+  // Verify if visual text can be rendered larger 
+  dynamicFont();
 
   console.log('Clear | user_input: ' + user_input);
   console.log('Clear | input_arr: ' + input_arr);

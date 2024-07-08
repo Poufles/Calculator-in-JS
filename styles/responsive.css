@@ -36,7 +36,7 @@
 
 @media screen and (max-width: 500px) {
     :root {
-        --initial-font_size: 2.5rem;
+        --initial-font_size: 2rem;
     }
 
     .text-container .title {
