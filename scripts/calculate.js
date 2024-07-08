@@ -77,7 +77,7 @@ function calculate(arr) {
         arr.splice(index, 0, solve(num1, oper, num2));
         // console.log(arr); // re-enable for debug
         // When answer is infinity
-        if (arr[index].toString() == Infinity) {
+        if (arr[index].toString() == Infinity || isNaN(arr[index])) {
             return 'Yes';
         };
     };
@@ -91,4 +91,4 @@ function verifyBeforeCalculate(arr) {
     return typeof (arr[arr.length - 1]) === 'string' ? '???' : calculate(arr);
 }
 
-// console.log(verifyBeforeCalculate([98, '/', 0, 'x', 3]));
+// console.log(verifyBeforeCalculate([0, '/', 0]));
