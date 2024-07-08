@@ -1,10 +1,21 @@
-// Validate decimal
+// Validate if num is already decimal
 function isDecimal(value) {
   return value.includes(".");
 }
 
+// Validate float
+function validateFloat(value) {
+  return /^[-]?\d+.\d+$/g.test(value);
+};
+
+// Validate int
+function validateInt(value) {
+  return /^[-]?\d+$/g.test(value);
+};
+
 // Create Answer container
-function createAnswerContainer(arrayValue) {
+function createAnswerContainer() {
+  let tempArr = []
   const answer_container = document.createElement('div');
   const left_part = document.createElement('p');
   const right_part = document.createElement('p');
@@ -18,10 +29,10 @@ function createAnswerContainer(arrayValue) {
   op_container.classList.remove('active');
 
   for (value of input_arr) {
-    arrayValue.push(value);
+    tempArr.push(value);
   }
 
-  right_part.textContent = verifyBeforeCalculate(arrayValue);
+  right_part.textContent = verifyBeforeCalculate(tempArr);
 };
 
 // Remove Answer container
@@ -30,7 +41,17 @@ function removeAnswerContainer() {
   op_container.classList.add('active');
 };
 
-// Create History
+// Validate for Possible History Container Creation
+function validateHistoryCreation() {
+  if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
+    createHistoryContainer();
+    input_arr = [];
+    op_container.classList.add('active');
+    removeAnswerContainer();
+  }
+};
+
+// Create History Container
 function createHistoryContainer() {
   if (!upper_screen.contains(upper_screen.querySelector('.history-container'))) {
     // Create elements / component
@@ -76,10 +97,10 @@ function createHistoryContainer() {
         let value = input_arr[i];
         if (value == '+' || value == '-' || value == 'x' || value == '/') {
           ;
-        } else if (isDecimal(value)) {
+        } else if (validateFloat(value)) {
           value = parseFloat(value);
         } else {
-          value = parseInt(value);
+          value = validateInt(value);
         }
 
         input_arr[i] = value;
@@ -132,14 +153,11 @@ function dynamicFont() {
 // Numpad (0-9) functions
 numpads.forEach((numpad) => {
   numpad.addEventListener("mousedown", () => {
-    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
-      createHistoryContainer();
-      input_arr.splice(0);
-      op_container.classList.add('active');
-      removeAnswerContainer();
-    }
+    // Verify if next visual text input
+    // Is a new one then creates history
+    validateHistoryCreation();
 
-    // Visual effect
+    // Visual text
     op_container.textContent += numpad.textContent;
     // Back-end value
     user_input += user_input === "" ? numpad.textContent : numpad.textContent;
@@ -152,6 +170,10 @@ numpads.forEach((numpad) => {
 
 // Dot Key Value
 key_dot.addEventListener("mousedown", () => {
+  // Verify if next visual text input
+  // Is a new one then creates history
+  validateHistoryCreation();
+
   // Check if back-end value is already a decimal(float) or not
   if (!isDecimal(user_input)) {
     if (user_input === "") {
@@ -175,10 +197,44 @@ operators.forEach((operator) => {
   operator.addEventListener("mousedown", () => {
     let visualTextLength = op_container.textContent.length; // Length of visual text
 
-    // Validate if answer container exist
-    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
-      op_container.classList.toggle('active');
-      removeAnswerContainer();
+    // Verify if next visual text input
+    // Is an operator
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && op_container.textContent[visualTextLength - 1] !== ' ') {
+      op_container.textContent = bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent;
+    }
+
+    // Or a new number
+    validateHistoryCreation();
+
+    if (op_container.textContent.slice(visualTextLength - 2) === '+ ' && user_input === '' && operator.textContent === '-') {
+      // Change the operator visually
+      op_container.textContent = op_container.textContent.slice(0, visualTextLength - 2) + `${operator.textContent} `;
+    };
+
+    // Verify negative values
+    // Check if format is (num - ) || (12 - )
+    if (user_input === '' && operator.textContent === '-' && op_container.textContent.slice(visualTextLength - 2) === '- ') {
+      return;
+    }
+
+    // Verify negative values
+    // Check if format is ( || num oper ) || ( || 23 / )
+    if (user_input === '' && operator.textContent === '-' || op_container.textContent === ' ') {
+      // Visual text
+      op_container.textContent += operator.textContent;
+      // Back-end value
+      user_input += operator.textContent;
+
+      console.log('Operator | user_input: ' + user_input);
+      console.log('Operator | input_arr: ' + input_arr);
+      return;
+    }
+
+    // Verify if starting visual text is empty
+    if (op_container.textContent === '') {
+      console.log('Operator | user_input: ' + user_input);
+      console.log('Operator | input_arr: ' + input_arr);
+      return;
     }
 
     // Verify if current visual text is an operator
@@ -187,34 +243,16 @@ operators.forEach((operator) => {
     if (op_container.textContent[visualTextLength - 1] === " ") {
       // Change the operator visually
       op_container.textContent = op_container.textContent.slice(0, visualTextLength - 2) + `${operator.textContent} `;
-      // Change the operator in the array
-      input_arr[input_arr.length - 1] = operator.textContent;
       // Else when the format is (num || 12)
     } else {
-      // Create temp variable
-      let numeric = 0;
-      // Verify is decimal(float) or not
-      // Then parse to proper data type
-      if (isDecimal(user_input)) {
-        numeric = parseFloat(user_input);
-      } else {
-        numeric = parseInt(user_input);
-      };
-
-      // Add value to the back-end array
-      input_arr.push(numeric);
       // Update visual text
       op_container.textContent = op_container.textContent[visualTextLength - 1] === '.' ? `${op_container.textContent.slice(0, visualTextLength - 1)} ${operator.textContent} ` : `${op_container.textContent} ${operator.textContent} `;
-      // Update back-end array, add operator
-      input_arr.push(operator.textContent);
       // Reinitialize back-end value for next num
       user_input = "";
-      console.log('Operator | user_input: ' + user_input);
-      console.log('Operator | input_arr: ' + input_arr);
     }
 
-    console.log(input_arr);
-    console.log(user_input);
+    console.log('Operator | user_input: ' + user_input);
+    console.log('Operator | input_arr: ' + input_arr);
     dynamicFont();
   });
 });
@@ -238,7 +276,7 @@ key_ac.addEventListener("mousedown", () => {
   op_container.classList.remove("small-font");
   verify_font_size = 0;
   user_input = "";
-  input_arr.splice(0);
+  input_arr = [];
   console.log('All Clear | input_arr:' + input_arr);
   console.log('All Clear | user_input:' + user_input);
 });
@@ -283,8 +321,10 @@ key_c.addEventListener("mousedown", () => {
       // Remove answer container
       removeAnswerContainer();
       // Take last back-end array value 
-      user_input = input_arr.pop().toString();
+      user_input = pre_history_arr.pop().toString();
       user_input = user_input.slice(0, user_input.length - 1)
+      // Reinitialize pre-history array
+      pre_history_arr = [];
       // Anything else
     } else {
       user_input = user_input.slice(0, user_input.length - 1);
@@ -315,7 +355,6 @@ key_c.addEventListener("mousedown", () => {
 
 // Equal Function (See calculate.js for calculate functions)
 key_equal.addEventListener('mousedown', () => {
-  let answer = []; // Temp array
   let visualTextLength = op_container.textContent.length; // Length of visual text
 
   // Verify if visual text is empty
@@ -323,11 +362,29 @@ key_equal.addEventListener('mousedown', () => {
     return;
   };
 
+  // Add back-end values to array
+  input_arr = op_container.textContent.split(' ');
+  let tempValue; // Create temp value holder
+  // Validate if float, int, or operator
+  for (let i = 0; i < input_arr.length; i++) {
+    tempValue = input_arr[i]; // Add value on temp var
+    if (validateFloat(tempValue)) {
+      numeric = parseFloat(tempValue);
+    } else if (validateInt(tempValue)) {
+      numeric = parseInt(tempValue);
+    } else {
+      continue;
+    }
+
+    // Change element
+    input_arr.splice(i, 1, numeric);
+  }
+
   // Check if current visual text is an operator
   // Format: (num operator) || (93 / )
   if (op_container.textContent[op_container.textContent.length - 1] === ' ') {
     // Answer with ???
-    createAnswerContainer(answer);
+    createAnswerContainer();
     // Anything else
   } else {
     let numeric = 0; // Temp answer variable
@@ -341,24 +398,20 @@ key_equal.addEventListener('mousedown', () => {
       user_input = user_input.slice(0, user_input.length - 1);
     }
 
-    // Check if decimal
-    // Then parse into proper data type
-    if (isDecimal(user_input)) {
-      numeric = parseFloat(user_input);
-    } else {
-      numeric = parseInt(user_input);
-    };
-
-    // Input value to the back-end array
-    input_arr.push(numeric);
-    // Reinitialize back-end value
-    user_input = '';
     console.log('Equal | user_input: ' + user_input);
     console.log('Equal | input_arr: ' + input_arr);
+
     // Create answer container
     if (!bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
-      createAnswerContainer(answer);
+      createAnswerContainer();
     }
+
+    // Reinitialize back-end value
+    user_input = '';
+    // Back-up array in case of revision before a history
+    pre_history_arr[0] = input_arr.pop();
+    console.log('Equal | user_input: ' + user_input);
+    console.log('Equal | input_arr: ' + input_arr);
   }
 });
 

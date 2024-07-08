@@ -1,10 +1,15 @@
 function MDAS(oper1, oper2) {
-    if ((oper1 == 'x' || oper1 == '/') && (oper2 == '*' || oper2 == '/')) {
-        return true;
-    } else if ((oper1 == 'x' || oper1 == '/') && (oper2 == '+' || oper2 == '-')) {
-        return true;
+    // Validate if MD
+    if ((oper1 == 'x' || oper1 == '/') && (oper2 == 'x' || oper2 == '/') || (oper1 == 'x' || oper1 == '/') && (oper2 == '+' || oper2 == '-')) {
+        return 'MD';
+    }
+
+    // Validate if AD
+    if ((oper1 == '+' || oper1 == '-') && (oper2 == '+' || oper2 == '-')) {
+        return 'AD';
+    // Validate if switch
     } else {
-        return false;
+        return 'next';
     }
 };
 
@@ -12,16 +17,16 @@ function solve(num1, oper, num2) {
     let result = 0;
     switch (oper) {
         case '+': result = num1 + num2
-        break;
+            break;
         case '-': result = num1 - num2
-        break;
+            break;
         case 'x': result = num1 * num2
-        break;
+            break;
         case '/': result = num1 / num2;
-        break;
+            break;
     }
 
-    return Math.round(result * 100) / 100;
+    return result;
 };
 
 function calculate(arr) {
@@ -31,6 +36,7 @@ function calculate(arr) {
     let next;
     let index;
 
+    console.log(arr);
     // Validate number of elements in array
     // As Array.length == 1 signifies answer
     while (arr.length !== 1) {
@@ -48,35 +54,36 @@ function calculate(arr) {
             for (i = 0; i <= arr.length - 4; i += 2) {
                 // Pointer for the next operator
                 next = arr[i + 3];
+                console.log(`${num1} | ${oper} | ${num2} | ${next}`);
                 // Validate with (PE)MDAS
-                if (!MDAS(oper, next)) {
+                if (MDAS(oper, next) === 'MD') {
+                    break;
+                } else if (MDAS(oper,next) === 'AD') {
+                    continue;
+                } else {
                     // Change values
-                    num1 = num2;
+                    num1 = arr[i + 2];
                     oper = next;
                     num2 = arr[i + 4];
                     index = i + 2;
-                } else {
-                    // Break if current operator
-                    // And next operator are M/D
-                    // Or next operator is A/S
-                    break;
                 }
             }
         }
 
-        // console.log(arr); re-enable for debug
+        console.log(`Final: ${num1} | ${oper} | ${num2} | ${next}`);
         // Remove num1, oper, and num2 values
         arr.splice(index, 3);
         // Then change it to their answer
         arr.splice(index, 0, solve(num1, oper, num2));
+        console.log(arr); // re-enable for debug
     };
 
     // Return answer
-    return arr.toString();
+    return (Math.round(arr * 100) / 100).toString();
 };
 
 function verifyBeforeCalculate(arr) {
-    return typeof(arr[arr.length - 1]) === 'string' ? '???' : calculate(arr);
+    return typeof (arr[arr.length - 1]) === 'string' ? '???' : calculate(arr);
 }
 
-console.log(verifyBeforeCalculate([98, '/', 6, '+', 0.32, '-', 9, '+', 0.98]));
+// console.log(verifyBeforeCalculate([98, '/', 6, '+', 0.32, 'x', 6, '-', 9, '+', 0.98, '/', 33, 'x', 100]));
