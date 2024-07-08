@@ -16,4 +16,5 @@ let pre_history_arr = [];
 let input_arr = [];
 let pre_history_user_input = '';
 let user_input = '';
+let history_user_input = '';
 let verify_font_size = 0;

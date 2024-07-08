@@ -105,10 +105,15 @@ function createHistoryContainer() {
 
         input_arr[i] = value;
       }
+
       // Retrieve last number value
-      user_input = pre_history_user_input;
+      user_input = history_user_input;
       // Reinitialize back-end array
       input_arr = [];
+      // Reinitialize pre-history value
+      pre_history_user_input = '';
+      // Reinitialize history value
+      history_user_input = '';
       // Remove history container
       upper_screen.removeChild(history_container);
       // Reinitialize screen
@@ -116,6 +121,8 @@ function createHistoryContainer() {
       screen.classList.toggle('history-active');
       console.log('History | user_input: ' + user_input);
       console.log('History | input_arr: ' + input_arr);
+      console.log('History | pre_history_user_input: ' + pre_history_user_input);
+      console.log('History | history_user_input: ' + history_user_input);
     });
   } else {
     // Retrieve upper screen containers
@@ -128,9 +135,16 @@ function createHistoryContainer() {
 
   // Reinitialize visual text
   op_container.textContent = "";
+  // Create history value of last number
+  // If history value is empty
+  if (history_user_input === '') {
+    history_user_input = pre_history_user_input;
+  }
 
   console.log('History | user_input: ' + user_input);
   console.log('History | input_arr: ' + input_arr);
+  console.log('History | pre_history_user_input: ' + pre_history_user_input);
+  console.log('History | history_user_input: ' + history_user_input);
 };
 
 // Changing font when text exceeds
@@ -269,6 +283,7 @@ operators.forEach((operator) => {
     if (op_container.textContent.slice(-1) === '.') {
       console.log("Hellow");
       op_container.textContent += `0 ${operator.textContent} `;
+      user_input = '';
       return;
     };
 
@@ -445,7 +460,7 @@ key_equal.addEventListener('mousedown', () => {
   }
 });
 
-// Operation container function
+// History | Operation container function
 op_container.addEventListener('mousedown', () => {
   let answer_container = bottom_screen.querySelector('.answer-container');
 
@@ -458,4 +473,6 @@ op_container.addEventListener('mousedown', () => {
 
   console.log('Pre-History | user_input: ' + user_input);
   console.log('Pre-History | input_arr: ' + input_arr);
+  console.log('Pre-History | pre_history_user_input: ' + pre_history_user_input);
+  console.log('Pre-History | history_user_input: ' + history_user_input);
 });
