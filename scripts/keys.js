@@ -106,9 +106,9 @@ function createHistoryContainer() {
         input_arr[i] = value;
       }
       // Retrieve last number value
-      user_input = input_arr[input_arr.length - 1].toString();
-      // Remove last number
-      input_arr.pop();
+      user_input = pre_history_user_input;
+      // Reinitialize back-end array
+      input_arr = [];
       // Remove history container
       upper_screen.removeChild(history_container);
       // Reinitialize screen
@@ -153,6 +153,19 @@ function dynamicFont() {
 // Numpad (0-9) functions
 numpads.forEach((numpad) => {
   numpad.addEventListener("mousedown", () => {
+    let visualTextLength = op_container.textContent.length;
+    // Verify visual text
+    // This is meant to add a second number
+    // To a missing operation
+    // Format: (num oper ) || (320 / )
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && op_container.textContent[visualTextLength - 1] === ' ') {
+      // Update visual text
+      op_container.textContent = op_container.textContent.slice(0) + numpad.textContent;
+      removeAnswerContainer();
+      // Reinitialize font size
+      return;
+    };
+
     // Verify if next visual text input
     // Is a new one then creates history
     validateHistoryCreation();
@@ -197,58 +210,62 @@ operators.forEach((operator) => {
   operator.addEventListener("mousedown", () => {
     let visualTextLength = op_container.textContent.length; // Length of visual text
 
-    // Verify if next visual text input
-    // Is an operator
-    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && op_container.textContent[visualTextLength - 1] !== ' ') {
-      op_container.textContent = bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent;
-    }
-
-    // Or a new number
-    validateHistoryCreation();
-
-    if (op_container.textContent.slice(visualTextLength - 2) === '+ ' && user_input === '' && operator.textContent === '-') {
-      // Change the operator visually
-      op_container.textContent = op_container.textContent.slice(0, visualTextLength - 2) + `${operator.textContent} `;
+    // Validate user error
+    // Check if output is '???'
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent === '???') {
+      validateHistoryCreation();
+      op_container.textContent = `0 ${operator.textContent} `;
+      return;
     };
 
-    // Verify negative values
-    // Check if format is (num - ) || (12 - )
-    if (user_input === '' && operator.textContent === '-' && op_container.textContent.slice(visualTextLength - 2) === '- ') {
+    // Validate next visual value
+    // If answer is available
+    // And user wants to continue operation
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').contains(bottom_screen.querySelector('.answer-container').querySelector('.answer'))) {
+      let temp = '';
+
+      temp = `${bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent} ${operator.textContent} `;
+      validateHistoryCreation();
+      op_container.textContent = temp;
       return;
     }
 
-    // Verify negative values
-    // Check if format is ( || num oper ) || ( || 23 / )
-    if (user_input === '' && operator.textContent === '-' || op_container.textContent === ' ') {
-      // Visual text
-      op_container.textContent += operator.textContent;
-      // Back-end value
-      user_input += operator.textContent;
+    validateHistoryCreation();
 
+    // Validate '-' sign as a negative after MD
+    if ((op_container.textContent[visualTextLength - 2] === 'x' || op_container.textContent[visualTextLength - 2] === '/') && operator.textContent === '-') {
+      user_input = '-';
+      op_container.textContent = `${op_container.textContent.slice(0, -1)} ${operator.textContent}`;
       console.log('Operator | user_input: ' + user_input);
       console.log('Operator | input_arr: ' + input_arr);
       return;
     }
 
-    // Verify if starting visual text is empty
-    if (op_container.textContent === '') {
+    // Validate '-' sign as a negative
+    // When operation container is empty
+    if (op_container.textContent === '' && operator.textContent === '-') {
+      user_input = '-';
+      op_container.textContent = operator.textContent;
       console.log('Operator | user_input: ' + user_input);
       console.log('Operator | input_arr: ' + input_arr);
       return;
     }
 
-    // Verify if current visual text is an operator
-    // " " signifies that the text inside the op_container
-    // Has this format (num operator ) || (1 + ) 
-    if (op_container.textContent[visualTextLength - 1] === " ") {
-      // Change the operator visually
-      op_container.textContent = op_container.textContent.slice(0, visualTextLength - 2) + `${operator.textContent} `;
-      // Else when the format is (num || 12)
-    } else {
+    // Validate if operator has to be changed
+    if (op_container.textContent.slice(-1) === ' ') {
+      op_container.textContent = `${op_container.textContent.slice(0, -2)}${operator.textContent} `;
+      return;
+    }
+
+    // Validate that the current 'operator' is not negative
+    // This is to prohibit addition of an operator
+    // Without a number after a negative sign
+    // Format: (num oper negative) || (23 x -)
+    if (op_container.textContent.slice(-1) !== '-') {
       // Update visual text
-      op_container.textContent = op_container.textContent[visualTextLength - 1] === '.' ? `${op_container.textContent.slice(0, visualTextLength - 1)} ${operator.textContent} ` : `${op_container.textContent} ${operator.textContent} `;
-      // Reinitialize back-end value for next num
-      user_input = "";
+      // Add operator
+      op_container.textContent += ` ${operator.textContent} `;
+      user_input = '';
     }
 
     console.log('Operator | user_input: ' + user_input);
@@ -284,7 +301,6 @@ key_ac.addEventListener("mousedown", () => {
 // Clear Value
 key_c.addEventListener("mousedown", () => {
   let visualTextLength = op_container.textContent.length; // Length of visual text
-  let arrayLength = input_arr.length; // Length of back-end value array
 
   // Verify if the current visual text is an operator
   // Format: (num operator ) || (12 - )
@@ -298,10 +314,9 @@ key_c.addEventListener("mousedown", () => {
     // Update visual text
     // By removing operator and spaces around it
     op_container.textContent = op_container.textContent.slice(0, visualTextLength - 3);
-    // Take the previous num value
-    user_input = input_arr[arrayLength - 2].toString();
-    // Remove the previous value and the operator
-    input_arr.splice(arrayLength - 2);
+    // Pre-history back-up value
+    console.log(pre_history_user_input);
+    user_input = pre_history_user_input;
     // If next visual text number is 0.
   } else if (user_input === '0.') {
     // Verify if answer container is already displayed
@@ -362,6 +377,11 @@ key_equal.addEventListener('mousedown', () => {
     return;
   };
 
+  // Verify if last visual text is just negative sign
+  if (op_container.textContent.slice(-1) === '-') {
+    op_container.textContent = op_container.textContent.slice(0, -1);
+  };
+
   // Add back-end values to array
   input_arr = op_container.textContent.split(' ');
   let tempValue; // Create temp value holder
@@ -387,8 +407,6 @@ key_equal.addEventListener('mousedown', () => {
     createAnswerContainer();
     // Anything else
   } else {
-    let numeric = 0; // Temp answer variable
-
     // Verify if current visual text ends with "."
     // Format: (num.) || (32.)
     if (op_container.textContent[visualTextLength - 1] === '.') {
@@ -406,12 +424,16 @@ key_equal.addEventListener('mousedown', () => {
       createAnswerContainer();
     }
 
+    // Back up back-end value in case of revision before a history
+    pre_history_user_input = user_input;
     // Reinitialize back-end value
     user_input = '';
     // Back-up array in case of revision before a history
     pre_history_arr[0] = input_arr.pop();
     console.log('Equal | user_input: ' + user_input);
     console.log('Equal | input_arr: ' + input_arr);
+    console.log('Equal | pre_history_user_input: ' + pre_history_user_input);
+    console.log('Equal | pre_history_arr: ' + pre_history_arr);
   }
 });
 
@@ -420,14 +442,12 @@ op_container.addEventListener('mousedown', () => {
   let answer_container = bottom_screen.querySelector('.answer-container');
 
   if (bottom_screen.contains(answer_container)) {
-    op_container.classList.add('active');
-    bottom_screen.removeChild(answer_container);
+    removeAnswerContainer();
     if (op_container.textContent[op_container.textContent.length - 1] !== " ") {
-      user_input = input_arr[input_arr.length - 1].toString();
+      user_input = pre_history_user_input;
     }
-    input_arr.pop();
   }
 
-  console.log('Op Container | user_input: ' + user_input);
-  console.log('Op Container | input_arr: ' + input_arr);
+  console.log('Pre-History | user_input: ' + user_input);
+  console.log('Pre-History | input_arr: ' + input_arr);
 });

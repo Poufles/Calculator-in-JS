@@ -75,7 +75,7 @@ function calculate(arr) {
         arr.splice(index, 3);
         // Then change it to their answer
         arr.splice(index, 0, solve(num1, oper, num2));
-        console.log(arr); // re-enable for debug
+        // console.log(arr); // re-enable for debug
     };
 
     // Return answer
