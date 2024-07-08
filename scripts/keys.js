@@ -148,6 +148,21 @@ function dynamicFont() {
       verify_font_size = 2;
     }
   }
+
+  // Verify if visual text can be rendered larger 
+  if (
+    op_container.getBoundingClientRect().width <
+    calculator_screen.getBoundingClientRect().width * 0.5
+  ) {
+    if (verify_font_size === 2) {
+      op_container.classList.toggle("small-font");
+      op_container.classList.toggle("mid-font");
+      verify_font_size = 1;
+    } else if (verify_font_size === 1) {
+      op_container.classList.toggle("mid-font");
+      verify_font_size = 0;
+    }
+  }
 }
 
 // Numpad (0-9) functions
@@ -162,7 +177,6 @@ numpads.forEach((numpad) => {
       // Update visual text
       op_container.textContent = op_container.textContent.slice(0) + numpad.textContent;
       removeAnswerContainer();
-      // Reinitialize font size
       return;
     };
 
@@ -189,8 +203,8 @@ key_dot.addEventListener("mousedown", () => {
 
   // Check if back-end value is already a decimal(float) or not
   if (!isDecimal(user_input)) {
-    if (user_input === "") {
-      // If visual value is the next number
+    if (user_input === '' || user_input === '-') {
+      // If visual value is the next number and/or a negative
       op_container.textContent += `0${key_dot.textContent}`;
     } else {
       // If visual value is already a number
@@ -251,6 +265,13 @@ operators.forEach((operator) => {
       return;
     }
 
+    // Check if visual text ends with decimal
+    if (op_container.textContent.slice(-1) === '.') {
+      console.log("Hellow");
+      op_container.textContent += `0 ${operator.textContent} `;
+      return;
+    };
+
     // Validate if operator has to be changed
     if (op_container.textContent.slice(-1) === ' ') {
       op_container.textContent = `${op_container.textContent.slice(0, -2)}${operator.textContent} `;
@@ -265,6 +286,7 @@ operators.forEach((operator) => {
       // Update visual text
       // Add operator
       op_container.textContent += ` ${operator.textContent} `;
+      pre_history_user_input = user_input;
       user_input = '';
     }
 
@@ -353,19 +375,7 @@ key_c.addEventListener("mousedown", () => {
   console.log('Clear | input_arr: ' + input_arr);
 
   // Verify if visual text can be rendered larger 
-  if (
-    op_container.getBoundingClientRect().width <
-    calculator_screen.getBoundingClientRect().width * 0.5
-  ) {
-    if (verify_font_size === 2) {
-      op_container.classList.toggle("small-font");
-      op_container.classList.toggle("mid-font");
-      verify_font_size = 1;
-    } else if (verify_font_size === 1) {
-      op_container.classList.toggle("mid-font");
-      verify_font_size = 0;
-    }
-  }
+  dynamicFont();
 });
 
 // Equal Function (See calculate.js for calculate functions)
@@ -382,8 +392,18 @@ key_equal.addEventListener('mousedown', () => {
     op_container.textContent = op_container.textContent.slice(0, -1);
   };
 
+  // Verify if current visual text ends with "."
+  // Format: (num.) || (32.)
+  if (user_input.slice(-1) === '.') {
+    // Remove decimal on visual text
+    op_container.textContent = op_container.textContent.slice(0, visualTextLength - 1);
+    // Remove decimal on back-end value
+    user_input = user_input.slice(0, user_input.length - 1);
+  }
+
   // Add back-end values to array
   input_arr = op_container.textContent.split(' ');
+  console.log(input_arr);
   let tempValue; // Create temp value holder
   // Validate if float, int, or operator
   for (let i = 0; i < input_arr.length; i++) {
@@ -407,18 +427,6 @@ key_equal.addEventListener('mousedown', () => {
     createAnswerContainer();
     // Anything else
   } else {
-    // Verify if current visual text ends with "."
-    // Format: (num.) || (32.)
-    if (op_container.textContent[visualTextLength - 1] === '.') {
-      // Remove decimal on visual text
-      op_container.textContent = op_container.textContent.slice(0, visualTextLength - 1);
-      // Remove decimal on back-end value
-      user_input = user_input.slice(0, user_input.length - 1);
-    }
-
-    console.log('Equal | user_input: ' + user_input);
-    console.log('Equal | input_arr: ' + input_arr);
-
     // Create answer container
     if (!bottom_screen.contains(bottom_screen.querySelector('.answer-container'))) {
       createAnswerContainer();

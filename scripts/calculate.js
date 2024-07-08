@@ -76,7 +76,12 @@ function calculate(arr) {
         // Then change it to their answer
         arr.splice(index, 0, solve(num1, oper, num2));
         // console.log(arr); // re-enable for debug
+        // When answer is infinity
+        if (arr[index].toString() == Infinity) {
+            return 'Yes';
+        };
     };
+
 
     // Return answer
     return (Math.round(arr * 100) / 100).toString();
@@ -86,4 +91,4 @@ function verifyBeforeCalculate(arr) {
     return typeof (arr[arr.length - 1]) === 'string' ? '???' : calculate(arr);
 }
 
-// console.log(verifyBeforeCalculate([98, '/', 6, '+', 0.32, 'x', 6, '-', 9, '+', 0.98, '/', 33, 'x', 100]));
+// console.log(verifyBeforeCalculate([98, '/', 0, 'x', 3]));
