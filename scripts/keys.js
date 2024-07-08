@@ -240,7 +240,7 @@ operators.forEach((operator) => {
 
     // Validate user error
     // Check if output is '???'
-    if (/Yes|\?\?\?/g.test(bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent)) {
+    if (bottom_screen.contains(bottom_screen.querySelector('.answer-container')) && /^Yes$|^\?\?\?$/g.test(bottom_screen.querySelector('.answer-container').querySelector('.answer').textContent)) {
       validateHistoryCreation();
       op_container.textContent = `0 ${operator.textContent} `;
       return;
